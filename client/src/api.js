@@ -1,3 +1,5 @@
+import { getApiUrl } from "./config/api.js";
+
 const TOKEN_KEY = "printflow_token";
 
 export function getToken() {
@@ -17,7 +19,7 @@ export async function api(path, options = {}) {
     headers["Content-Type"] = "application/json";
     options.body = JSON.stringify(options.body);
   }
-  const res = await fetch("/api" + path, { ...options, headers });
+  const res = await fetch(getApiUrl(path), { ...options, headers });
   if (res.status === 401) {
     setToken(null);
     window.location.href = "/login";
@@ -39,7 +41,7 @@ export async function api(path, options = {}) {
 
 export function downloadBlob(path, filename) {
   const token = getToken();
-  return fetch("/api" + path, {
+  return fetch(getApiUrl(path), {
     headers: token ? { Authorization: "Bearer " + token } : {},
   }).then(async (res) => {
     if (!res.ok) throw new Error("Download failed");
